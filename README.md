@@ -1,6 +1,6 @@
-# Hi!, I'm Amrit Sapkota
+# Hi, I'm Amrit Sapkota!
 
-### A passionate frontend developer
+### Turning ideas into pixel-perfect, high-performance web applications.
 
 ---
 
