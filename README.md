@@ -1,10 +1,10 @@
-# Hi 👋, I'm Amrit Sapkota
+# Hi!, I'm Amrit Sapkota
 
 ### A passionate frontend developer
 
 ---
 
-## 🛠️ Languages and Tools
+## Languages and Tools
 
 <div align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="50" alt="HTML5" />
@@ -32,9 +32,9 @@
 
 ---
 
-### 💫 About Me
-- 🔭 Currently working on frontend projects
-- 🌱 Always learning new technologies
+### About Me
+- Currently working on frontend projects
+- Always learning new technologies
 ---
 
 *"Building beautiful and functional web experiences"*
