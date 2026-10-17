@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/hero-light.svg">
-    <img src="assets/hero-light.svg" alt="Amrit Sapkota, Frontend Developer in Pokhara, Nepal. Available for work. I build fast, accessible web apps with Next.js and TypeScript." width="100%">
+    <img src="assets/hero-light.svg" alt="Amrit Sapkota, Frontend Developer in Pokhara, Nepal. Now: shipping pixel-perfect UIs. I build fast, accessible web apps with Next.js and TypeScript." width="100%">
   </picture>
 </a>
 

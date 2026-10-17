@@ -129,19 +129,19 @@ def delay(seconds):
 # (text, kind) tokens, and each kind is a shade of grey, never a hue.
 CODE = [
     [("import", "kw"), (" { ", "p"), ("Developer", "id"), (" } ", "p"), ("from", "kw"), (" ", "p"),
-     ('"@/pokhara"', "str"), (";", "p")],
+     ('"@/nepal"', "str"), (";", "p")],
     [],
     [("export default function", "kw"), (" ", "p"), ("Amrit", "id"), ("() {", "p")],
     [("  return", "kw"), (" (", "p")],
     [("    <", "p"), ("Developer", "id")],
     [("      role", "attr"), ("=", "p"), ('"Frontend"', "str")],
     [("      stack", "attr"), ("={[", "p"), ('"Next.js"', "str"), (", ", "p"), ('"TypeScript"', "str"), ("]}", "p")],
-    [("      available", "attr")],
+    [("      based", "attr"), ("=", "p"), ('"Pokhara"', "str")],
     [("    />", "p")],
     [("  );", "p")],
     [("}", "p")],
 ]
-CARET_LINE = 7  # the caret blinks after `available`
+CARET_LINE = 7  # the caret blinks after `based="Pokhara"`
 # How far each kind sits from the background toward the text colour.
 SHADE = {"kw": .44, "id": .36, "attr": .32, "str": .26, "p": .22, "num": .14}
 
@@ -177,8 +177,11 @@ def hero(theme):
   <mask id="grid-mask"><rect width="{W}" height="{H}" fill="url(#grid-fade)"/></mask>
 </defs>'''
 
-    pill_label = "Available for work"
-    pill_w = 40 + measure(pill_label, 13, wght=500)
+    # Status pill: a short "what I'm on right now" line, edited here.
+    now, focus = "Now", "Shipping pixel-perfect UIs"
+    now_w = measure(now, 13, wght=600)
+    focus_x = 78 + now_w + 18
+    pill_w = focus_x - 48 + measure(focus, 13, wght=500) + 14
     role, sep, place = "Frontend Developer", "·", "Pokhara, Nepal"
     role_w = measure(role, 21, wght=600)
     sep_x = 48 + role_w + 10
@@ -191,7 +194,9 @@ def hero(theme):
   <rect x="48.5" y="40.5" width="{pill_w:.1f}" height="29" rx="14.5" fill="{t["chip"]}" stroke="{t["border"]}"/>
   <circle class="halo" cx="65" cy="55" r="4" fill="{t["green"]}"/>
   <circle cx="65" cy="55" r="4" fill="{t["green"]}"/>
-  {text(pill_label, 78, 59.6, 13, t["muted"], wght=500)}
+  {text(now, 78, 59.6, 13, t["fg"], wght=600)}
+  {text("·", 78 + now_w + 6, 59.6, 13, t["subtle"])}
+  {text(focus, focus_x, 59.6, 13, t["muted"], wght=500)}
 </g>
 <g class="rise"{delay(.15)}>{text("Amrit Sapkota", 45, 146, 68, t["fg"], wght=800, tracking=-0.035)}</g>
 <g class="rise"{delay(.25)}>
@@ -209,7 +214,7 @@ def hero(theme):
 </g>
 <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="15.5" stroke="{t["border"]}"/>
 {left}'''
-    desc = ("Amrit Sapkota, Frontend Developer in Pokhara, Nepal, available for work. "
+    desc = ("Amrit Sapkota, Frontend Developer in Pokhara, Nepal. Now: shipping pixel-perfect UIs. "
             "Builds fast, accessible web apps with Next.js and TypeScript. "
             "Behind the text, a faint grid holds a short React component.")
     write(f"hero-{theme}.svg", document(W, H, "Amrit Sapkota", desc, body, MOTION))
