@@ -1,0 +1,45 @@
+name: Redraw contribution graph
+
+on:
+  schedule:
+    - cron: "15 0 * * *" # 06:00 in Nepal
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/update_contributions.py
+      - scripts/svgkit.py
+      - .github/workflows/contributions.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: contributions
+  cancel-in-progress: true
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+      - run: pip install -r scripts/requirements.txt
+      - name: Draw graph from GitHub data
+        run: python scripts/update_contributions.py
+        env:
+          GH_USER: ${{ github.repository_owner }}
+          # Private contribution counts are public on this profile, so the
+          # built-in token sees them. A PAT is only needed if that setting is off.
+          GH_TOKEN: ${{ secrets.GH_STATS_TOKEN || secrets.GITHUB_TOKEN }}
+      - run: python scripts/check_profile.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/contributions-*.svg
+          git diff --staged --quiet || (git commit -m "chore: redraw contribution graph" && git push)
