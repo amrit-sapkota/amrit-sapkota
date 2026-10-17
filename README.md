@@ -11,7 +11,7 @@
   <a href="https://www.amritsapkota0.com.np/amrit-sapkota-frontend-developer-cv.pdf"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-cv-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/btn-cv-light.svg"><img src="assets/btn-cv-light.svg" alt="CV (PDF)"></picture></a>
   <a href="mailto:amritsapkota010@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-email-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/btn-email-light.svg"><img src="assets/btn-email-light.svg" alt="Email"></picture></a>
   <a href="https://www.linkedin.com/in/amrit-sapkota-a315b0184/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-linkedin-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/btn-linkedin-light.svg"><img src="assets/btn-linkedin-light.svg" alt="LinkedIn"></picture></a>
-  <a href="https://www.instagram.com/dev.amrit99/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-instagram-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/btn-instagram-light.svg"><img src="assets/btn-instagram-light.svg" alt="Instagram"></picture></a>
+  <a href="https://www.instagram.com/_amritsapkota/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-instagram-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/btn-instagram-light.svg"><img src="assets/btn-instagram-light.svg" alt="Instagram"></picture></a>
 </p>
 
 <picture>

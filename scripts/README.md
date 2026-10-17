@@ -24,8 +24,8 @@ python3 scripts/check_profile.py
 - **Words, links, projects, stack:** the `BUTTONS`, `STACK`, `WORK` and
   `BRANDS` lists at the top of `generate_assets.py`. The README alt text
   repeats the card copy for screen readers, so update both.
-- **Colours:** `THEMES` in `svgkit.py`. They are the zinc neutrals and the
-  violet/blue glow of amritsapkota0.com.np.
+- **Colours:** `THEMES` in `svgkit.py`. Flat black and white with no
+  gradients; green is the only colour (availability dot, contribution graph).
 - **New icon:** save the SVG in `icons/` (Simple Icons has most brands) and add
   it to `BRANDS`. Brand colours are nudged automatically when they would be
   too faint on the theme background.

@@ -22,43 +22,32 @@ FONTS = ROOT / "fonts"
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
 
-# Zinc neutrals and the violet/blue glow from amritsapkota0.com.np.
+# Flat black and white, no gradients. The only colour is green: the
+# availability dot and GitHub's own contribution scale.
 THEMES = {
     "dark": {
-        "bg": "#09090b",
-        "surface": "#0e0e11",
-        "chip": "#151518",
-        "border": "#27272a",
-        "hairline": "#1d1d21",
+        "bg": "#0a0a0a",
+        "chip": "#141414",
+        "border": "#262626",
+        "hairline": "#1a1a1a",
+        "grid": "#1c1c1c",
         "fg": "#fafafa",
-        "muted": "#a1a1aa",
-        "subtle": "#71717a",
-        "glow_a": ("#7c3aed", 0.30),
-        "glow_b": ("#2563eb", 0.24),
+        "muted": "#a3a3a3",
+        "subtle": "#737373",
         "green": "#22c55e",
-        "levels": ["#18181b", "#2e1065", "#5b21b6", "#8b5cf6", "#c4b5fd"],
-        "sky_body": "#e4e4e7",
-        "ridge": "#3f3f46",
-        "peak": "#d4d4d8",
-        "hill": "#111114",
+        "levels": ["#171717", "#0e4429", "#006d32", "#26a641", "#39d353"],
     },
     "light": {
         "bg": "#ffffff",
-        "surface": "#fafafa",
         "chip": "#ffffff",
-        "border": "#e4e4e7",
-        "hairline": "#f1f1f3",
-        "fg": "#09090b",
-        "muted": "#52525b",
-        "subtle": "#71717a",
-        "glow_a": ("#8b5cf6", 0.13),
-        "glow_b": ("#3b82f6", 0.11),
+        "border": "#e5e5e5",
+        "hairline": "#f0f0f0",
+        "grid": "#ededed",
+        "fg": "#0a0a0a",
+        "muted": "#525252",
+        "subtle": "#737373",
         "green": "#16a34a",
-        "levels": ["#f1f1f3", "#ddd6fe", "#a78bfa", "#7c3aed", "#4c1d95"],
-        "sky_body": "#f59e0b",
-        "ridge": "#a1a1aa",
-        "peak": "#27272a",
-        "hill": "#f4f4f5",
+        "levels": ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
     },
 }
 
@@ -140,6 +129,8 @@ def _n(v):
 
 def measure(s, size, *, family="sans", wght=400, tracking=0.0, features=None):
     """Advance width in px; tracking is in em, like CSS letter-spacing."""
+    if not s:
+        return 0.0
     _, pos = _shape(s, family, wght, size, features)
     upem = _face(family).upem
     return (sum(p.x_advance for p in pos) * size / upem

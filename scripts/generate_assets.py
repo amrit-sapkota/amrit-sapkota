@@ -8,7 +8,7 @@ The contribution graph has its own script because a workflow redraws it daily.
 """
 from html import escape
 
-from svgkit import THEMES, document, icon, legible, measure, text, wrap, write
+from svgkit import THEMES, document, icon, legible, measure, mix, text, wrap, write
 
 SITE = "https://www.amritsapkota0.com.np"
 
@@ -108,16 +108,12 @@ WORK = [
 MOTION = (
     ".rise{animation:rise .9s cubic-bezier(.16,1,.3,1) both}"
     "@keyframes rise{from{opacity:0;transform:translateY(8px)}}"
-    ".draw{stroke-dasharray:1;animation:draw 2.8s cubic-bezier(.65,0,.35,1) both}"
-    "@keyframes draw{from{stroke-dashoffset:1}}"
-    ".fade{animation:fade 1.4s ease both}"
-    "@keyframes fade{from{opacity:0}}"
+    ".type{animation:type .5s ease-out both}"
+    "@keyframes type{from{opacity:0}}"
     ".halo{transform-box:fill-box;transform-origin:center;animation:halo 2.4s ease-out infinite}"
     "@keyframes halo{from{opacity:.55;transform:scale(1)}to{opacity:0;transform:scale(3)}}"
-    ".ripple{animation:ripple 6s ease-in-out infinite alternate}"
-    "@keyframes ripple{from{transform:translateX(-7px)}to{transform:translateX(7px)}}"
-    ".star{animation:twinkle 3.6s ease-in-out infinite alternate}"
-    "@keyframes twinkle{from{opacity:.15}}"
+    ".caret{animation:caret 1.1s steps(1) infinite}"
+    "@keyframes caret{50%{opacity:0}}"
 )
 
 
@@ -129,86 +125,56 @@ def delay(seconds):
 # Hero
 # --------------------------------------------------------------------------
 
-def mountains(t, theme):
-    """Machhapuchhre over the Annapurna ridge, as seen across Phewa Lake."""
-    back = ("M548 214L566 202L582 191L596 172L607 160L616 165L627 148L638 157L649 141"
-            "L662 160L676 173L700 182L748 176L766 152L780 133L791 143L804 124L818 141"
-            "L832 160L848 176L866 188L880 196")
-    # Both feet run down behind the hills so no stroke ends in mid-air.
-    peak = ("M570 236L604 214L636 193L657 175L673 151L686 128L697 104L706 82L712 63L718 78"
-            "L725 95L737 117L751 139L769 161L793 185L822 205L846 214L905 236")
-    face = "M712 63L718 78L725 95L737 117L751 139L769 161L745 156L731 136L721 112L715 88Z"
-    spine = "M712 63L709 92L703 121L696 146"
-    hills = ("M540 240C572 222 604 214 640 222C676 230 700 212 742 213"
-             "C786 214 812 232 846 226C860 223 872 220 880 219V246H540Z")
-    lake = 242
+# The faint editor behind the right half of the hero. Each line is a list of
+# (text, kind) tokens, and each kind is a shade of grey, never a hue.
+CODE = [
+    [("import", "kw"), (" { ", "p"), ("Developer", "id"), (" } ", "p"), ("from", "kw"), (" ", "p"),
+     ('"@/pokhara"', "str"), (";", "p")],
+    [],
+    [("export default function", "kw"), (" ", "p"), ("Amrit", "id"), ("() {", "p")],
+    [("  return", "kw"), (" (", "p")],
+    [("    <", "p"), ("Developer", "id")],
+    [("      role", "attr"), ("=", "p"), ('"Frontend"', "str")],
+    [("      stack", "attr"), ("={[", "p"), ('"Next.js"', "str"), (", ", "p"), ('"TypeScript"', "str"), ("]}", "p")],
+    [("      available", "attr")],
+    [("    />", "p")],
+    [("  );", "p")],
+    [("}", "p")],
+]
+CARET_LINE = 7  # the caret blinks after `available`
+# How far each kind sits from the background toward the text colour.
+SHADE = {"kw": .44, "id": .36, "attr": .32, "str": .26, "p": .22, "num": .14}
 
-    sky = [f'<circle cx="822" cy="74" r="58" fill="url(#sky-glow)"/>']
-    if theme == "dark":
-        sky.append('<mask id="crescent"><rect width="880" height="290" fill="#fff"/>'
-                   '<circle cx="828" cy="69" r="13" fill="#000"/></mask>')
-        sky.append(f'<circle cx="822" cy="74" r="14" fill="{t["sky_body"]}" mask="url(#crescent)" opacity=".9"/>')
-        stars = [(612, 62, 1.1), (650, 96, .9), (758, 56, 1.2), (858, 128, .9),
-                 (588, 116, .8), (776, 104, .8), (690, 44, 1)]
-        for i, (x, y, r) in enumerate(stars):
-            sky.append(f'<circle class="star" cx="{x}" cy="{y}" r="{r}" fill="#fafafa"{delay(i * .7)}/>')
-    else:
-        sky.append(f'<circle cx="822" cy="74" r="14" fill="{t["sky_body"]}" opacity=".9"/>')
 
-    ripples = "".join(
-        f'<path class="ripple" d="M{x} {y}h{w}" stroke="{t["subtle"]}" stroke-width="1" '
-        f'stroke-linecap="round" opacity="{o}"{delay(i * .9)}/>'
-        for i, (x, y, w, o) in enumerate([
-            (602, 254, 46, .55), (676, 252, 72, .45), (780, 256, 40, .5),
-            (630, 266, 64, .35), (724, 268, 30, .4), (584, 279, 34, .3), (680, 281, 52, .3),
-        ]))
-    snow = (f'<path class="fade" d="{peak}Z" fill="url(#snow)"{delay(1.8)}/>' if theme == "dark" else "")
-
-    return f'''
-<g mask="url(#scene-fade)">
-  {"".join(sky)}
-  <path class="draw" pathLength="1" d="{back}" stroke="{t["ridge"]}" stroke-width="1.3" stroke-linejoin="round"/>
-  <path class="fade" d="{back}V236H548Z" fill="url(#ridge-fill)"{delay(1.6)}/>
-  <path class="fade" d="{peak}Z" fill="{t["bg"]}"{delay(.4)}/>
-  {snow}
-  <path class="fade" d="{face}" fill="{t["peak"]}" opacity=".09"{delay(2)}/>
-  <path class="draw" pathLength="1" d="{spine}" stroke="{t["peak"]}" stroke-width="1" opacity=".35"{delay(1.4)}/>
-  <path class="draw" pathLength="1" d="{peak}" stroke="{t["peak"]}" stroke-width="1.6" stroke-linejoin="round"{delay(.3)}/>
-  <path d="{hills}" fill="{t["hill"]}"/>
-  <path d="M540 {lake}H880" stroke="{t["border"]}" stroke-width="1"/>
-  {ripples}
-</g>'''
+def code(t, x0, y0, size=12, leading=19):
+    shade = {kind: mix(t["bg"], t["fg"], s) for kind, s in SHADE.items()}
+    out = [text("amrit.tsx", x0, y0 - 28, 10.5, shade["str"], family="mono")]
+    for i, line in enumerate(CODE):
+        y = y0 + i * leading
+        parts = [text(str(i + 1), x0 - 16, y, 10.5, shade["num"], family="mono", anchor="end")]
+        prefix = ""
+        for chunk, kind in line:
+            if chunk.strip():
+                parts.append(text(chunk.lstrip(), x0 + measure(prefix + chunk[:len(chunk) - len(chunk.lstrip())], size, family="mono"),
+                                  y, size, shade[kind], family="mono"))
+            prefix += chunk
+        if i == CARET_LINE:
+            cx = x0 + measure(prefix, size, family="mono") + 2
+            parts.append(f'<rect class="caret" x="{cx:.1f}" y="{y - 10}" width="7" height="13" fill="{shade["kw"]}"/>')
+        out.append(f'<g class="type"{delay(round(.5 + i * .07, 2))}>{"".join(parts)}</g>')
+    return "".join(out)
 
 
 def hero(theme):
     t = THEMES[theme]
     W, H = 880, 290
-    glow_a, glow_b = t["glow_a"], t["glow_b"]
-    name_end = "#ffffff" if theme == "dark" else "#3f3f46"
-    name_stop = ('<stop offset=".35" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff" stop-opacity=".55"/>'
-                 if theme == "dark" else
-                 f'<stop offset=".35" stop-color="{t["fg"]}"/><stop offset="1" stop-color="{name_end}"/>')
     defs = f'''<defs>
   <clipPath id="card"><rect width="{W}" height="{H}" rx="16"/></clipPath>
-  <radialGradient id="glow-a"><stop stop-color="{glow_a[0]}" stop-opacity="{glow_a[1]}"/><stop offset="1" stop-color="{glow_a[0]}" stop-opacity="0"/></radialGradient>
-  <radialGradient id="glow-b"><stop stop-color="{glow_b[0]}" stop-opacity="{glow_b[1]}"/><stop offset="1" stop-color="{glow_b[0]}" stop-opacity="0"/></radialGradient>
-  <linearGradient id="name" x1="0" y1="92" x2="0" y2="150" gradientUnits="userSpaceOnUse">{name_stop}</linearGradient>
-  <linearGradient id="ridge-fill" x1="0" y1="124" x2="0" y2="214" gradientUnits="userSpaceOnUse">
-    <stop stop-color="{t["ridge"]}" stop-opacity=".22"/><stop offset="1" stop-color="{t["ridge"]}" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="scene-x" x1="520" x2="640" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/>
-  </linearGradient>
-  <radialGradient id="sky-glow"><stop stop-color="{t["sky_body"]}" stop-opacity="{.16 if theme == "dark" else .22}"/><stop offset="1" stop-color="{t["sky_body"]}" stop-opacity="0"/></radialGradient>
-  <linearGradient id="snow" x1="0" y1="63" x2="0" y2="170" gradientUnits="userSpaceOnUse">
-    <stop stop-color="{t["peak"]}" stop-opacity=".22"/><stop offset="1" stop-color="{t["peak"]}" stop-opacity="0"/>
-  </linearGradient>
-  <mask id="scene-fade"><rect width="{W}" height="{H}" fill="url(#scene-x)"/></mask>
-  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="{t["border"]}"/></pattern>
-  <radialGradient id="dots-fade" cx="0.22" cy="0.1" r="0.75">
-    <stop stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 .5H.5V24" stroke="{t["grid"]}"/></pattern>
+  <radialGradient id="grid-fade" cx=".76" cy=".5" r=".55">
+    <stop stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
-  <mask id="dots-mask"><rect width="{W}" height="{H}" fill="url(#dots-fade)"/></mask>
+  <mask id="grid-mask"><rect width="{W}" height="{H}" fill="url(#grid-fade)"/></mask>
 </defs>'''
 
     pill_label = "Available for work"
@@ -227,7 +193,7 @@ def hero(theme):
   <circle cx="65" cy="55" r="4" fill="{t["green"]}"/>
   {text(pill_label, 78, 59.6, 13, t["muted"], wght=500)}
 </g>
-<g class="rise"{delay(.15)}>{text("Amrit Sapkota", 45, 146, 68, "url(#name)", wght=800, tracking=-0.035, inline=True)}</g>
+<g class="rise"{delay(.15)}>{text("Amrit Sapkota", 45, 146, 68, t["fg"], wght=800, tracking=-0.035)}</g>
 <g class="rise"{delay(.25)}>
   {text(role, 48, 188, 21, t["fg"], wght=600)}
   {text(sep, sep_x, 188, 21, t["subtle"])}
@@ -235,24 +201,18 @@ def hero(theme):
 </g>
 <g class="rise"{delay(.35)}>{"".join(text(line, 48, 224 + i * 23, 15, t["muted"]) for i, line in enumerate(lines))}</g>'''
 
-    caption = text("MACHHAPUCHHRE · 6,993 M", 856, 276, 9.5, t["subtle"], family="mono", anchor="end", tracking=0.08)
-
     body = f'''{defs}
 <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="15.5" fill="{t["bg"]}"/>
 <g clip-path="url(#card)">
-  <circle cx="110" cy="-30" r="330" fill="url(#glow-a)"/>
-  <circle cx="860" cy="330" r="360" fill="url(#glow-b)"/>
-  <rect width="{W}" height="{H}" fill="url(#dots)" mask="url(#dots-mask)"/>
-  {mountains(t, theme)}
-  <g class="fade"{delay(2.4)}>{caption}</g>
+  <rect width="{W}" height="{H}" fill="url(#grid)" mask="url(#grid-mask)"/>
+  {code(t, 578, 76)}
 </g>
 <rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="15.5" stroke="{t["border"]}"/>
 {left}'''
     desc = ("Amrit Sapkota, Frontend Developer in Pokhara, Nepal, available for work. "
             "Builds fast, accessible web apps with Next.js and TypeScript. "
-            "Line drawing of Machhapuchhre above Phewa Lake.")
+            "Behind the text, a faint grid holds a short React component.")
     write(f"hero-{theme}.svg", document(W, H, "Amrit Sapkota", desc, body, MOTION))
-
 
 # --------------------------------------------------------------------------
 # Buttons
@@ -334,15 +294,8 @@ def work_cards(theme):
     lines = max(len(v) for v in wrapped.values())
     rule = 100 + (lines - 1) * 20 + 24  # hairline sits under the last line of copy
     H = rule + 44
-    glow = t["glow_a"]
     for w in WORK:
-        body = f'''<defs>
-  <clipPath id="c"><rect width="{W}" height="{H}" rx="14"/></clipPath>
-  <radialGradient id="g"><stop stop-color="{glow[0]}" stop-opacity="{glow[1] * .8:.2f}"/><stop offset="1" stop-color="{glow[0]}" stop-opacity="0"/></radialGradient>
-</defs>
-<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="13.5" fill="{t["bg"]}"/>
-<circle cx="{W - 20}" cy="-10" r="170" fill="url(#g)" clip-path="url(#c)"/>
-<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="13.5" stroke="{t["border"]}"/>
+        body = f'''<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="13.5" fill="{t["bg"]}" stroke="{t["border"]}"/>
 {text(w["kind"], pad, 38, 10, t["subtle"], family="mono", tracking=0.08)}
 {icon("lucide-arrow-up-right", W - pad - 16, 25, 16, t["subtle"])}
 {text(w["title"], pad, 72, 21, t["fg"], wght=700, tracking=-0.01)}
